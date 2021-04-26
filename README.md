@@ -1,1 +1,0 @@
-# gDel_minRN
