@@ -6,7 +6,7 @@ function [outputArg1,outputArg2] = example3()
 %
 load('iML1515.mat');
 model=iML1515;
-[gr pr it success]=gDel_minRN(model,model.mets{423},10,0.1,0.1);
+[gr pr it success]=gDel_minRN(model,'pnto__R_c',10,0.1,0.1);
 
 save('example3.mat');
 end
