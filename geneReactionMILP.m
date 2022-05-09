@@ -1,33 +1,4 @@
 function [f,intcon,A,b,Aeq,beq,lb,ub,xname] = geneReactionMILP(model,term,ng,nt,nr,nko,reactionKO)
-% geneReactionMILP is a function of gDel_minRN that converts
-% the gene-protein-reaction relations into MILP formalization.
-%
-% function [f,intcon,A,b,Aeq,beq,lb,ub,xname] = geneReactionMILP(model,term,ng,nt,nr,nko,reactionKO)
-%INPUTS
-% model     COBRA model structure containing the following required fields to perform gDel_minRN.
-%   rxns                    Rxns in the model
-%   mets                    Metabolites in the model
-%   genes               Genes in the model
-%   grRules            Gene-protein-reaction relations in the model
-%   S                       Stoichiometric matrix (sparse)
-%   b                       RHS of Sv = b (usually zeros)
-%   c                       Objective coefficients
-%   lb                      Lower bounds for fluxes
-%   ub                      Upper bounds for fluxes
-%   rev                     Reversibility of fluxes
-%
-% term    the list of Boolean functions extracted from the gene-protein-reaction relations
-% ng  the number of genes
-% nt  the number of internal terms
-% nr  the number of reactions
-% nko the number of repressible reactions
-%
-%OUTPUTS
-%  f,intcon,A,b,Aeq,beq,lb,ub         as defined in cplexmilp
-%  xname       indicates what each variable in MILP represents
-%  
-% Apr. 22, 2021 Takeyuki TAMURA
-%
 n_and=0;n_or=0;n_equal=0;
 for i=1:size(term,2)
     switch char(term(i).function)

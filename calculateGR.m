@@ -29,6 +29,6 @@ for i=1:size(grRules,1)
        grRules{i,4}=-1; 
     end
 end
-save('calculateGR.mat');
+%save('calculateGR.mat');
 end
 
