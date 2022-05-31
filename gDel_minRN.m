@@ -52,7 +52,7 @@ options=cplexoptimset('cplex');
 options.mip.tolerances.integrality=10^(-12);
 %options=cplexoptimset('TolXInteger',10^(-12));
 
-sss=sprintf('gDel-minRN.mat');
+sss=sprintf('results/gDel-minRN%d.mat',iii);
 [model,targetRID,extype] = modelSetting(model,targetMet)
 
 m=size(model.mets,1);
@@ -158,12 +158,25 @@ while it<=maxLoop
         save(sss);
         return;
     end
-    [gr,pr]=GRPRchecker(model,targetMet,gvalue)
-    grprList(it,:)=[gr pr];
+    [grRules] = calculateGR(model,gvalue);
     
-    if (gr>=GRLB) &&  (pr>=PRLB)
-        [gr pr]
-        vg(:,it);
+    lb2=model2.lb;
+    ub2=model2.ub;
+    for i=1:nr
+        if grRules{i,4}==0
+            lb2(i)=0;
+            ub2(i)=0;
+        end
+    end
+    [opt2.x, opt2.f, opt2.stat, opt2.output] = ...
+        cplexlp(-model.c, [],[], model.S, zeros(m,1),lb2, ub2);
+    grprList(it,:)=[opt2.x(gid) opt2.x(pid)];
+    gr=opt2.x(gid); pr=opt2.x(pid);
+    result2(:,it)=opt2.x;
+    
+    if (opt2.x(gid)>=GRLB) &&  (opt2.x(pid)>=PRLB)
+        [opt2.x(gid) opt2.x(pid)]
+        vg(:,it)
         success=1;
         system('rm -f clone*.log');
         time=toc
@@ -176,7 +189,7 @@ while it<=maxLoop
     db=-1;
     lp.A=[lp.A; dA];
     lp.b=[lp.b; db];
-    
+
     it=it+1;
     system('rm -f clone*.log');
     save(sss);

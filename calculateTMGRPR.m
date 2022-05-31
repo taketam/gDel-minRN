@@ -28,9 +28,11 @@ for i=1:m0
     else
         list0(i,2)=0;
     end
-    [opt3.x, opt3.f, opt3.stat, opt3.output] = ...
-        cplexlp(model.c, [],[], model.S, zeros(m,1),model.lb, model.ub);
+    model.lb(gid)=-opt1.f;
+    model.ub(gid)=-opt1.f;
     
+    [opt3.x, opt3.f, opt3.stat, opt3.output] = ...
+        cplexlp(model.c, [],[], model.S, zeros(m,1),model.lb, model.ub);    
     
     if opt3.stat>0
         list0(i,3)=opt3.f;

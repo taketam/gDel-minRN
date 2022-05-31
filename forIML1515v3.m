@@ -7,7 +7,7 @@ function [outputArg1,outputArg2] = forIML1515v3()
 load('iML1515.mat');
 model=iML1515;
 m=size(model.mets,1);
-for i=1149:1499
+for i=906:1350
 %for i=1000:m
     model=iML1515;
     [gr pr it success]=gDel_minRN(model,model.mets{i},5,0.1,0.1,i);
