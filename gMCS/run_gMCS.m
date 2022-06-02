@@ -1,17 +1,10 @@
-function [outputArg1,outputArg2] = test_gMCS()
-%EFMEXAMPLE この関数の概要をここに記述
-%   詳細説明をここに記述
+function [rmcs, full_mcs, full_cnap, model2, targetRID] = run_gMCS(model,targetMet)
 startcna(1);
-
-%load('e_coli_core.mat');
-%model=e_coli_core;
-load('small0.mat');
-
-targetMet='m4'
 [model2,targetRID,extype] = modelSetting(model,targetMet);
 m=size(model2.mets,1);
 n=size(model2.rxns,1);
 g=size(model2.genes,1);
+
 model2.rxns{n+1}='r_dummy';
 model2.grRules{n+1}='';
 model2.rxnNames{n+1}='r_dummy';
@@ -23,10 +16,9 @@ model2.rev(n+1)=0;
 n=n+1;
 
 gr_id=find(model2.c);
+glc_id=find(contains(model2.rxns,'EX_glc'));
 cnap=CNAcobra2cna(model2);
 [cnap2,enzymes,genes,gpr_rules]=CNAgenerateGPRrules(cnap,model2.grRules,0);
-save('a.mat');
-
 
 T=zeros(1,n);
 T(1,n)=-1;
@@ -36,25 +28,31 @@ D(1,gr_id)=-1;
 d(1,1)=-0.1;
 D(2,targetRID)=-1;
 d(2,1)=-0.1;
+
 notknockable=ones(1,n)
 maxMCSnum=10;
 maxMCSsize=10;
 reac_off=[];
 time_limit=10;
 default_flux_limit=1000;
-%default_flux_limit=cnap2.reacMax;
-%T=[];
-%D=[];
-%[ gcnap, rmap, gmap, gkoCost, gkiCost, gT, gD, rType, sType, gpr_rules ] =... 
-%CNAintegrateGPRrules(cnap,gpr_rules,koCost,kiCost,T,D,gkoCost,gkiCost)
-%save('a.mat');return;
 
-save('a.mat');
 [mcs, gene_idx] = ...
 CNAgeneMCSEnumerator(cnap,T,t,D,d,notknockable,maxMCSnum,maxMCSsize,reac_off,...
 time_limit,default_flux_limit,enzymes);
+time=toc
+%list=cellstr(full_cnap.reacID);
+%list2=full(full_mcs);
 
-save('test_gMCS.mat');
+%for i=1:g
+%   save('a.mat');
+%   s=sprintf('GP-(%s',model2.genes{i});
+%   f=find(contains(list,s));
+%   gvalue{i,1}=model2.genes{i};
+%   gvalue{i,2}=list2(f);
+%end
+
+
+save('run_gMCS.mat');
 return;
 
 
