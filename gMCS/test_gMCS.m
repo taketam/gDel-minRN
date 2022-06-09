@@ -20,7 +20,6 @@ model2.ub(n+1)=1000;
 model2.c(n+1)=0;
 model2.rev(n+1)=0;
 n=n+1;
-flag=0;
 for i=1:n
     if i>size(model2.grRules,1)
         model2.grRules{i}='';
@@ -29,15 +28,13 @@ for i=1:n
     end
 end
 model2.grRules{n}='g_dummy';
-model.genes{g+1}='g_dummy';
+model2.genes{g+1}='g_dummy';
 g=g+1;
 
 gr_id=find(model2.c);
 cnap=CNAcobra2cna(model2);
 
 [cnap2,enzymes,genes,gpr_rules]=CNAgenerateGPRrules(cnap,model2.grRules,0);
-save('a.mat');
-
 
 T=zeros(1,n);
 T(1,n)=-1;
@@ -58,14 +55,26 @@ kiCost=ones(n,1);
 maxSolutions=10;
 maxCost=100;
 gkoCost=ones(g,1);
-gkiCost=ones(g,1);
+for i=1:g
+   gkiCost(i,1)=NaN;
+end
+%gkiCost=ones(g,1);
 %save('a.mat');return;
 
-save('a.mat');
 [rmcs, full_mcs, full_cnap, cmp_mcs, cmp_cnap, mcs_idx_cmp_full, status, obj] = ...
 CNAgeneMCSEnumerator2(cnap2,T,t,D,d,koCost,kiCost,maxSolutions,maxCost,...
                  gkoCost,gkiCost,gpr_rules)
-  
+             
+list=cellstr(full_cnap.reacID);
+list2=full(full_mcs);
+for j=1:size(full_mcs,2)
+for i=1:g
+   s=sprintf('GP-%s',model2.genes{i});
+   f=find(contains(list,s));
+   gvalue{i,1}=model2.genes{i};
+   gvalue{i,j+1}=list2(f,j);
+end
+end
 save('test_gMCS.mat');
 return;
 

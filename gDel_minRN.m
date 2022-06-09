@@ -1,4 +1,4 @@
-function [vg gr pr it success] = gDel_minRN(model,targetMet,maxLoop,PRLB,GRLB,iii)
+function [vg gr pr it success] = gDel_minRN(model,targetMet,maxLoop,PRLB,GRLB)
 % gDel-minRN that determines gene deletion strategies 
 %by mixed integer linear programming to achieve growth coupling 
 %for the target metabolite by repressing the maximum number of reactions 
@@ -52,7 +52,7 @@ options=cplexoptimset('cplex');
 options.mip.tolerances.integrality=10^(-12);
 %options=cplexoptimset('TolXInteger',10^(-12));
 
-sss=sprintf('results/gDel-minRN%d.mat',iii);
+sss=sprintf('gDel-minRN.mat');
 [model,targetRID,extype] = modelSetting(model,targetMet)
 
 m=size(model.mets,1);

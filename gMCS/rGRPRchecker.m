@@ -11,17 +11,21 @@ pid=targetRID;
 model2=model;
 [opt0.x, opt0.f, opt0.stat, opt0.output] = ...
     cplexlp(-model.c, [],[], model.S, zeros(m,1),model.lb, model.ub);
-[opt0.x(gid) opt0.x(pid)]
-
-GR0=-opt0.f;
-model2.lb(gid)=GR0;
-model2.ub(gid)=GR0;
-model2.c(gid)=0;
-model2.c(pid)=1;
-[opt1.x, opt1.f, opt1.stat, opt1.output] = ...
-    cplexlp(model2.c, [],[], model.S, zeros(m,1),model2.lb, model2.ub);
-GR=opt1.x(gid) 
-PR=opt1.x(pid)
+if opt0.stat>0
+    
+    GR0=-opt0.f;
+    model2.lb(gid)=GR0;
+    model2.ub(gid)=GR0;
+    model2.c(gid)=0;
+    model2.c(pid)=1;
+    [opt1.x, opt1.f, opt1.stat, opt1.output] = ...
+        cplexlp(model2.c, [],[], model.S, zeros(m,1),model2.lb, model2.ub);
+    GR=opt1.x(gid)
+    PR=opt1.x(pid)
+else
+    GR=0;
+    PR=0;
+end
 
 save('rGRPRchecker.mat');
 return;

@@ -14,7 +14,16 @@ model2.ub(n+1)=1000;
 model2.c(n+1)=0;
 model2.rev(n+1)=0;
 n=n+1;
-
+for i=1:n
+    if i>size(model2.grRules,1)
+        model2.grRules{i}='';
+    elseif isempty(model2.grRules{i})==1
+        model2.grRules{i}='';
+    end
+end
+model2.grRules{n}='g_dummy';
+model2.genes{g+1}='g_dummy';
+g=g+1;
 gr_id=find(model2.c);
 glc_id=find(contains(model2.rxns,'EX_glc'));
 cnap=CNAcobra2cna(model2);
@@ -29,29 +38,41 @@ d(1,1)=-0.1;
 D(2,targetRID)=-1;
 d(2,1)=-0.1;
 
-notknockable=ones(1,n)
-maxMCSnum=10;
-maxMCSsize=10;
-reac_off=[];
-time_limit=10;
-default_flux_limit=1000;
+koCost=ones(n,1);
+kiCost=ones(n,1);
+maxSolutions=10;
+maxCost=100;
+gkoCost=ones(g,1);
+%gkiCost=ones(g,1);
+for i=1:g
+   gkiCost(i,1)=NaN;
+end
+%gkiC
+[rmcs, full_mcs, full_cnap, cmp_mcs, cmp_cnap, mcs_idx_cmp_full, status, obj] = ...
+    CNAgeneMCSEnumerator2(cnap2,T,t,D,d,koCost,kiCost,maxSolutions,maxCost,...
+    gkoCost,gkiCost,gpr_rules)
 
-[mcs, gene_idx] = ...
-CNAgeneMCSEnumerator(cnap,T,t,D,d,notknockable,maxMCSnum,maxMCSsize,reac_off,...
-time_limit,default_flux_limit,enzymes);
-time=toc
-%list=cellstr(full_cnap.reacID);
-%list2=full(full_mcs);
+list=cellstr(full_cnap.reacID);
+list2=full(full_mcs);
 
-%for i=1:g
-%   save('a.mat');
-%   s=sprintf('GP-(%s',model2.genes{i});
-%   f=find(contains(list,s));
-%   gvalue{i,1}=model2.genes{i};
-%   gvalue{i,2}=list2(f);
-%end
+for j=1:size(full_mcs,2)
+    for i=1:g
+        s=sprintf('GP-(%s',model2.genes{i});
+        f=find(contains(list,s));
+        gvalue{i,1}=model2.genes{i};
+        gvalue{i,j+1}=list2(f,j);
+        if isempty(f)==1
+            save('a.mat');
+            s1=sprintf('%s',model2.genes{i});
+            f1=find(contains(list,s1));
+            s2=sprintf('GP-',model2.genes{i});
+            f2=find(contains(list,s2));
+            f3=intersect(f1,f2);
+            gvalue{i,j+1}=list2(f3,j);
+        end
 
-
+    end
+end
 save('run_gMCS.mat');
 return;
 

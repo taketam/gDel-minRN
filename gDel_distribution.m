@@ -1,7 +1,7 @@
 function [outputArg1,outputArg2] = gDel_distribution()
 %ANALYZERESULT この関数の概要をここに記述
 %   詳細説明をここに記述
-load('checkResult_old.mat');
+load('checkResult.mat');
 load('iML1515.mat');
 model=iML1515;
 m=size(model.mets,1);

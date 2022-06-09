@@ -23,6 +23,9 @@ for j=1:s
         return;
     end
 end
+if s==0
+    GR=0;PR=0;
+end
 success
 save('check_rmcs.mat');
 return;
